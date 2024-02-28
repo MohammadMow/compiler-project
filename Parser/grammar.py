@@ -23,10 +23,23 @@ class NonTerminal(Node):
         return self.name
 
 
+class Action(Node):
+    def __init__(self, name, **kwargs):
+        super(Action, self).__init__(name, **kwargs)
+        self.name = name
+
+    def __str__(self):
+        return str(self.name)
+
+    def __repr__(self):
+        return str(self.name)
+
+
 class ProductRule:
     def __init__(self, lhs: NonTerminal, rhs: list):
         self.lhs = lhs
         self.rhs = rhs
+        self.predict_set = []
 
     def __str__(self):
         return str(self.lhs)
@@ -38,11 +51,13 @@ class Grammar:
         self.terminals = []
         self.non_terminals = []
         self.product_rules = []
+        self.rule_counter = 1
         self.import_terminals()
         self.import_non_terminals()
         self.import_firsts()
         self.import_follows()
         self.import_product_rules()
+        self.import_predicts()
 
     def add_product_rule(self, rule):
         self.product_rules.append(rule)
@@ -54,6 +69,14 @@ class Grammar:
         for terminal in self.terminals:
             if terminal.name == name:
                 return terminal
+        return Action(name)
+
+    def get_rules_by_lhs(self, name):
+        rules = []
+        for rule in self.product_rules:
+            if rule.lhs.name == name:
+                rules.append(rule)
+        return rules
 
     def import_terminals(self):
         with open('Parser/data.json', encoding='utf-8') as f:
@@ -80,10 +103,16 @@ class Grammar:
                 non_terminal.follow = [self.get_term_by_name(term) for term in value]
 
     def import_product_rules(self):
-        with open('Parser/grammar.txt', encoding='utf-8') as f:
+        with open('Parser/code_gen_grammar.txt', encoding='utf-8') as f:
             for line in f.readlines():
                 lhs_as_str, rhs_as_str = line.strip('\n').split(' -> ')
                 lhs = self.get_term_by_name(lhs_as_str)
                 for rule in rhs_as_str.split('|'):
                     terms = [self.get_term_by_name(term) for term in rule.split()]
                     self.add_product_rule(ProductRule(lhs, terms))
+
+    def import_predicts(self):
+        with open('Parser/predict.txt', encoding='utf-8') as f:
+            for i, line in enumerate(f.readlines()):
+                rule = self.product_rules[i]
+                rule.predict_set = line.strip('\n').split(' ')

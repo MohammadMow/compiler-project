@@ -62,7 +62,7 @@ class Scanner:
         while True:
             tmp_current_line = self.get_current_line()
             token = self.get_next_token()
-            if token is None:
+            if token[0] == 'EOF':
                 break
             while self.get_current_line() > tmp_current_line:
                 self.tokens.append([])
@@ -82,6 +82,6 @@ class Scanner:
         self.errors_table = ErrorsTable(self.errors)
 
     def __export_tables(self):
-        self.tokens_table.export_lexical_errors()
-        self.symbols_table.export_lexical_errors()
+        self.tokens_table.export()
+        self.symbols_table.export()
         self.errors_table.export_lexical_errors()

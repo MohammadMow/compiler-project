@@ -49,7 +49,7 @@ def build_rename_of_symbol(start_dfa_node):
     symbols_except_equal_star = RegexEdge().accept_symbols().reject('=').reject('*')
     symbol_equal_edge = RegexEdge().accept('=')
     symbol_star_edge = RegexEdge().accept('*')
-    everything_except_slash = RegexEdge().accept_white_spaces().accept_comments().accept_alphabets().accept_symbols().reject('/')
+    everything_except_slash = RegexEdge().accept_digits().accept_white_spaces().accept_comments().accept_alphabets().accept_symbols().reject('/')
     everything = RegexEdge().accept_digits().accept_white_spaces().accept_comments().accept_alphabets().accept_symbols()
 
     # create dfa

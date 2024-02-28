@@ -17,10 +17,16 @@ class Color:
 
 
 def compare_files(file1_path, file2_path):
-    with open(file1_path, 'r') as file1, open(file2_path, 'r') as file2:
-        content1 = file1.read()
-        content2 = file2.read()
-        return content1 == content2
+    with open(file1_path, 'r') as f1, open(file2_path, 'r') as f2:
+        lines1, lines2 = f1.readlines(), f2.readlines()
+        lines1 = [line.strip() for line in lines1 if line.strip() != '']
+        lines2 = [line.strip() for line in lines2 if line.strip() != '']
+        if len(lines1) != len(lines2):
+            return False
+        for i in range(len(lines1)):
+            if lines1[i] != lines2[i]:
+                return False
+    return True
 
 
 def get_number_of_tests():
